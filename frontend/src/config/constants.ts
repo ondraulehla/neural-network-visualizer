@@ -1,0 +1,1 @@
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://neural-network-backend-316730021938.us-central1.run.app";
