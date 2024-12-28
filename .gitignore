@@ -88,3 +88,6 @@ next-env.d.ts
 # Misc
 .vercel
 .turbo
+
+notes.txt
+projectstructure.md
