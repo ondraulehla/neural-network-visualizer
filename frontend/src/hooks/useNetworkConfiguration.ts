@@ -63,8 +63,6 @@ export function useNetworkConfiguration() {
             }
             const data = (await response.json()) as NetworkResponse;
 
-            console.log('Received data from backend:', data);
-
             if (data.network) {
                 // Load layers
                 const networkLayers = data.network.structure.layers.map(layer => ({
@@ -86,15 +84,6 @@ export function useNetworkConfiguration() {
                 const savedInputPoints = data.network.structure.input_points || [];
                 const savedTargetCoordinates = data.network.structure.target_coordinates || [];
 
-                // Debug prints for saved data state
-                console.log('Saved data check:', {
-                    coordinates: savedCoordinates?.length ?? 0,
-                    inputPoints: savedInputPoints?.length ?? 0,
-                    targetCoordinates: savedTargetCoordinates?.length ?? 0,
-                    rawInputPoints: data.network.structure.input_points,
-                    rawTargetCoordinates: data.network.structure.target_coordinates
-                });
-
                 setSampleSize(data.network.structure.sample_size ?? defaultConfiguration.sample_size);
                 setDatasetType(data.network.structure.dataset_type ?? defaultConfiguration.dataset_type);
 
@@ -113,12 +102,10 @@ export function useNetworkConfiguration() {
                         Array.isArray(savedInputPoints) && savedInputPoints.length > 0 &&
                         Array.isArray(savedTargetCoordinates) && savedTargetCoordinates.length > 0) {
 
-                        console.log('Using saved visualization data');
                         setInputPoints(savedInputPoints);
                         setCoordinates(savedCoordinates);
                         setTargetCoordinates(savedTargetCoordinates);
                     } else {
-                        console.log('No complete saved visualization data found, generating new');
                         const { inputs, targets } = createTrainingData(
                             data.network.structure.sample_size ?? defaultConfiguration.sample_size,
                             data.network.structure.dataset_type ?? defaultConfiguration.dataset_type
@@ -257,8 +244,6 @@ export function useNetworkConfiguration() {
         try {
             // Generate and normalize input data
             const { inputs, targets } = createTrainingData(sampleSize, datasetType);
-            console.log("Sample target points:", targets.slice(0, 5));
-            console.log("Sample input points:", inputs.slice(0, 5));
             setInputPoints(inputs);
             setTargetCoordinates(targets);
 
@@ -271,17 +256,6 @@ export function useNetworkConfiguration() {
             // Create deep copies for training
             const workingWeights = JSON.parse(JSON.stringify(weights));
             const workingBiases = JSON.parse(JSON.stringify(biases));
-
-            console.log("Starting training with parameters:", {
-                learningRate,
-                epochs,
-                batchSize,
-                l2Factor,
-                layerConfig: layers.map(l => ({
-                    neurons: l.num_neurons,
-                    activation: l.activation_function
-                }))
-            });
 
             // Train the network
             const result = await trainNetwork(
@@ -306,13 +280,6 @@ export function useNetworkConfiguration() {
                                 currentWeights,
                                 currentBiases
                             );
-
-                            console.log("Training progress:", {
-                                epoch,
-                                error,
-                                sampleOutputs: currentOutputs.slice(0, 5),
-                                targetOutputs: targets.slice(0, 5)
-                            });
 
                             // Check for NaN or Infinity values
                             const hasInvalid = currentOutputs.some(output =>
@@ -350,12 +317,6 @@ export function useNetworkConfiguration() {
 
             // Validate final outputs
             const finalError = computeMSE(finalOutputs, targets);
-            console.log("Training completed:", {
-                finalError,
-                epochsCompleted: epochCount,
-                sampleOutputs: finalOutputs.slice(0, 5),
-                sampleTargets: targets.slice(0, 5)
-            });
 
             setCoordinates(finalOutputs);
             toast.success(`Training completed! Final error: ${finalError.toFixed(6)}`);
@@ -372,12 +333,6 @@ export function useNetworkConfiguration() {
         const newLayers = defaultConfiguration.layers;
         const newWeights = generateInitialWeights(newLayers);
         const newBiases = generateBiases(newLayers);
-
-        console.log('Initial configuration:', {
-            layers: newLayers,
-            weights: newWeights,
-            biases: newBiases
-        });
 
         setLayers(newLayers);
         setWeights(newWeights);
@@ -399,12 +354,6 @@ export function useNetworkConfiguration() {
         setTargetCoordinates(targets);
 
         const outputs = processOutputs(inputs, newLayers, newWeights, newBiases);
-        console.log('Generated outputs:', {
-            outputLength: outputs.length,
-            sampleOutputs: outputs.slice(0, 5),
-            hasNaN: outputs.some(output => output.some(val => isNaN(val))),
-            hasInfinite: outputs.some(output => output.some(val => !isFinite(val)))
-        });
         setCoordinates(outputs);
     };
 
@@ -482,19 +431,12 @@ export function useNetworkConfiguration() {
         setTargetCoordinates(targets);
 
         const outputs = processOutputs(inputs, layers, weights, newBiases);
-        console.log('New outputs generated:', outputs);
         setCoordinates(outputs);
     };
 
     const saveConfiguration = async () => {
         try {
             setLoading(true);
-
-            console.log('Saving current state:', {
-                coordinates: coordinates?.length,
-                inputPoints: inputPoints?.length,
-                targetCoordinates: targetCoordinates?.length
-            });
 
             // Create a deep copy of the coordinates to ensure they're properly serialized
             const configToSave = {
@@ -514,8 +456,6 @@ export function useNetworkConfiguration() {
                 }
             };
 
-            console.log('Configuration being saved:', configToSave);
-
             const response = await fetch(`${BACKEND_URL}/config`, {
                 method: 'POST',
                 headers: {
@@ -530,7 +470,6 @@ export function useNetworkConfiguration() {
             }
 
             const data = await response.json();
-            console.log('Save response:', data);
             return data;
         } catch (error) {
             console.error('Error saving configuration:', error);

@@ -114,14 +114,30 @@ export const Documentation: React.FC = () => {
             <div className="space-y-2">
               <p className="text-gray-700">Choose from different input patterns:</p>
               <ul className="list-disc ml-6 text-gray-700">
-                <li><strong>Random:</strong> Randomly distributed points</li>
-                <li><strong>Circle:</strong> Points arranged in a circular pattern</li>
-                <li><strong>XOR:</strong> Classical XOR pattern demonstrating non-linear separation</li>
-                <li><strong>Spiral:</strong> Interleaved spiral pattern</li>
-                <li><strong>Gaussian:</strong> Points clustered in Gaussian distributions</li>
+                <li>
+                  <strong>Random:</strong> Randomly distributed points<br/>
+                  <em>Target Shape:</em> Smooth surface
+                </li>
+                <li>
+                  <strong>Circle:</strong> Points arranged in a circular pattern<br/>
+                  <em>Target Shape:</em> Curved dome 
+                </li>
+                <li>
+                  <strong>XOR:</strong> Classical XOR pattern demonstrating non-linear separation<br/>
+                  <em>Target Shape:</em> Binary peaks 
+                </li>
+                <li>
+                  <strong>Spiral:</strong> Interleaved spiral pattern<br/>
+                  <em>Target Shape:</em> Intertwined helixes
+                </li>
+                <li>
+                  <strong>Gaussian:</strong> Points clustered in Gaussian distributions<br/>
+                  <em>Target Shape:</em> Gaussian peaks and valleys
+                </li>
               </ul>
             </div>
           </section>
+
 
           {/* Tips Section */}
           <section>
